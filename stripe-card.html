@@ -159,6 +159,7 @@
 
         // some basic client side validation
         if (!form.validate()) {
+          this.loading = false;
           throw {
             type: 'form_validation',
           };
@@ -262,7 +263,10 @@
       }
 
       _submit() {
-        this.createToken().catch((error) => {/* suppress uncaught promise warnings */});
+        
+        this.createToken().catch((error) => {
+          this.displayError();
+        });
       }
 
       _clearErrors() {
@@ -270,7 +274,7 @@
       }
 
       displayError(error) {
-        if (error.type == "card_error" && error.param) {
+        if (error && error.type && error.type == "card_error" && error.param) {
           let element = this.$.form.querySelector(`[name="${error.param}"]`);
 
           if (element) {
@@ -281,7 +285,7 @@
             }
           }
         }
-        this.$.error.innerText = error.message;
+        this.$.error.innerText = error && error.message ? error.message : '';
       }
 
       _nestedQueryString(params, parent) {
